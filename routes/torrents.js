@@ -54,7 +54,16 @@ router.get('/name/:name', async (req, res) => {
 
 router.get('/distrobution/:distrobution', async (req, res) => {
     try{
-        const resultQuery = await Torrent.find({distrobution: req.params.distrobution, isDeleted: false});
+        const resultQuery = await Torrent.find({distrobution: {$regex: req.params.distrobution, $options: 'i'}, isDeleted: false});
+        res.send(resultQuery);
+    } catch(err){
+        res.json({message: err});
+    }
+});
+
+router.get('/author/:author', async (req, res) => {
+    try{
+        const resultQuery = await Torrent.find({author: req.params.author, isDeleted: false});
         res.send(resultQuery);
     } catch(err){
         res.json({message: err});
