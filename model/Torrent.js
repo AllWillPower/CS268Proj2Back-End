@@ -19,9 +19,10 @@ const torrentSchema = new mongoose.Schema({
         minlength: 10,
         maxlength: 200
     },
-    downloadPath: {
-        type: String,
-        required: [true, 'Download link is required']
+    downloadFile: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: [true, 'fileID is required'],
+        unique: [true, 'fileID is already in use']
     },
     distrobution: {
         type: String,

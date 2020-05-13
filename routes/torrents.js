@@ -1,8 +1,6 @@
 const router = require('express').Router();
 const Torrent = require('../model/Torrent');
 const torrentsRoute = require('./torrents');
-const fs = require('fs');
-const grid = require('gridfs-stream');
 
 router.get('/', async (req, res) => {
     const torrents = await Torrent.find();
