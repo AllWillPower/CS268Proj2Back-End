@@ -25,6 +25,7 @@ const torrentSchema = new mongoose.Schema({
         unique: [true, 'filename is already in use']
     },
     distrobution: {
+        type: Object,
         required: [true, 'distrobution is required'],
         distrobutionName: {
             type: String,
