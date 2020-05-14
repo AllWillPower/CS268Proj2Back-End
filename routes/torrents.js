@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
             description: req.body.description,
             filename: req.body.filename,
             fileSize: req.body.fileSize,
-            distrobution: req.body.distrobution
+            distribution: req.body.distribution
         };
         const result = await Torrent.create(structure);
         res.send(result);
@@ -65,9 +65,9 @@ router.get('/name/:name', async (req, res) => {
     }
 });
 
-router.get('/distrobution/:distrobution', async (req, res) => {
+router.get('/distribution/:distribution', async (req, res) => {
     try{
-        const resultQuery = await Torrent.find({distrobution: {$regex: req.params.distrobution, $options: 'i'}, isDeleted: false});
+        const resultQuery = await Torrent.find({distrobution: {$regex: req.params.distribution, $options: 'i'}, isDeleted: false});
         res.send(resultQuery);
     } catch(err){
         res.json({error: err});

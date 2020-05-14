@@ -24,17 +24,17 @@ const torrentSchema = new mongoose.Schema({
         required: [true, 'filename is required'],
         unique: [true, 'filename is already in use']
     },
-    distrobution: {
+    distribution: {
         type: Object,
-        required: [true, 'distrobution is required'],
-        distrobutionName: {
+        required: [true, 'distribution is required'],
+        distributionName: {
             type: String,
-            required: [true, 'distrobution name is required']
+            required: [true, 'distribution name is required']
         },
-        distrobutionWebsite: {
+        distributionWebsite: {
             type: String,
             required: true,
-            validate: [/^((https?):\/\/)?(www.)?[a-z0-9]+\.[a-z]+$/, 'Distrobution website must be of the format (http[s]://)(www.)url.com']
+            validate: [/^((https?):\/\/)?(www.)?[a-z0-9]+\.[a-z]+$/, 'Distribution website must be of the format (http[s]://)(www.)url.com']
         }
     },
     fileSize: {
@@ -44,12 +44,10 @@ const torrentSchema = new mongoose.Schema({
     seeders: {
         type: Number,
         default: 0,
-        minlength: 0
     },
     leechers: {
         type: Number,
         default: 0,
-        minlength: 0
     },
     dateCreated: {
         type: Date,
