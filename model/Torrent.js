@@ -19,10 +19,10 @@ const torrentSchema = new mongoose.Schema({
         minlength: 10,
         maxlength: 200
     },
-    fileID: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: [true, 'fileID is required'],
-        unique: [true, 'fileID is already in use']
+    filename: {
+        type: String,
+        required: [true, 'filename is required'],
+        unique: [true, 'filename is already in use']
     },
     distrobution: {
         required: false,

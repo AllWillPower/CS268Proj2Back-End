@@ -13,7 +13,7 @@ router.post('/', async (req, res) => {
             name: req.body.name,
             author: req.body.author,
             description: req.body.description,
-            fileID: req.body.fileID,
+            fileID: req.body.filename,
             fileSize: req.body.fileSize
         };
         if(req.body.distrobution) structure.distrobution = req.body.distrobution;
