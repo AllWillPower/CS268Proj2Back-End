@@ -19,20 +19,26 @@ const torrentSchema = new mongoose.Schema({
         minlength: 10,
         maxlength: 200
     },
-    downloadFile: {
+    fileID: {
         type: mongoose.Schema.Types.ObjectId,
         required: [true, 'fileID is required'],
         unique: [true, 'fileID is already in use']
     },
     distrobution: {
-        type: String,
         required: false,
-        maxlength: 20,
+        distrobutionName: {
+            type: String,
+            required: true
+        },
         distrobutionWebsite: {
             type: String,
             required: true,
             validate: [/^((https?):\/\/)?(www.)?[a-z0-9]+\.[a-z]+$/, 'Distrobution website must be of the format (http[s]://)(www.)url.com']
         }
+    },
+    fileSize: {
+        type: Number,
+        required: [true, 'File size is required']
     },
     seeders: {
         type: Number,
@@ -43,10 +49,6 @@ const torrentSchema = new mongoose.Schema({
         type: Number,
         default: 0,
         minlength: 0
-    },
-    fileSize: {
-        type: Number,
-        required: [true, 'File size is required']
     },
     dateCreated: {
         type: Date,
