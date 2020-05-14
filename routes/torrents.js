@@ -14,9 +14,9 @@ router.post('/', async (req, res) => {
             author: req.body.author,
             description: req.body.description,
             filename: req.body.filename,
-            fileSize: req.body.fileSize
+            fileSize: req.body.fileSize,
+            distrobution = req.body.distrobution
         };
-        if(req.body.distrobution) structure.distrobution = req.body.distrobution;
         const result = await Torrent.create(structure);
         res.send(result);
     } catch(err){
