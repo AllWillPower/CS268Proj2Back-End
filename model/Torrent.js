@@ -37,7 +37,7 @@ const torrentSchema = new mongoose.Schema({
             validate: [/^((https?):\/\/)?(www.)?[a-z0-9]+\.[a-z]+$/, 'Distribution website must be of the format (http[s]://)(www.)url.com']
         }
     },
-    fileSize: {
+    filesize: {
         type: Number,
         required: [true, 'File size is required']
     },
