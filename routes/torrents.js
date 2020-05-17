@@ -3,8 +3,17 @@ const Torrent = require('../model/Torrent');
 const torrentsRoute = require('./torrents');
 
 router.get('/', async (req, res) => {
-    const torrents = await Torrent.find();
-    res.send(torrents);
+    try{
+        Torrent.find({isDeleted: false}, (err, results) => {
+            if(!err){
+                res.send(results);
+            } else{
+                res.status(400).send({error: err.message});
+            }
+        });
+    } catch(err){
+        res.status(400).send({error: err.message});
+    }
 });
 
 router.post('/', async (req, res) => {
@@ -17,29 +26,51 @@ router.post('/', async (req, res) => {
             filesize: req.body.filesize,
             distribution: req.body.distribution
         };
-        const result = await Torrent.create(structure);
-        res.send(result);
+        Torrent.create(structure, (err, result) => {
+            if(!err){
+                res.send(result);
+            } else{
+                res.status(400).send({error: err.message});
+            }
+        });
     } catch(err){
-        res.json({error: err});
+        res.json({error: err.message});
     }
 });
 
 router.get('/:id', async (req, res) => {
     try{
-        const torrent = await Torrent.find({_id: req.params.id, isDeleted: false});
-        res.status(200).send(torrent);
+        Torrent.find({_id: req.params.id, isDeleted: false}, (err, result) => {
+            if(!err){
+                if(!result){
+                    res.status(404).send({error: 'Torrent with the id: ' + req.params.id + ' not found'});
+                } else{
+                    res.send(result);
+                }
+            } else{
+                res.status(400).send({error: err.message});
+            }
+        });
     } catch(err){
-        res.status(400).send({error: err});
+        res.status(400).send({error: err.message});
     }
 });
 
 router.delete('/:id', async (req, res) => {
     try{
-        const removed = await Torrent.findByIdAndUpdate(req.params.id, {isDeleted: true});
-        if(removed) res.send(removed);
-        else res.send({error: 'Object with id: ' + req.params.id + ' not found'});
+        Torrent.findOneAndUpdate({_id: req.params.id, isDeleted: false}, {isDeleted: true}, (err, result) => {
+            if(!err){
+                if(!result){
+                    res.status(404).send({error: 'Torrent with the id: ' + req.params.id + ' not found'});
+                } else{
+                    res.send(result);
+                }
+            } else{
+                res.status(400).send({error: err.message});
+            }
+        });
     } catch(err){
-        res.json({error: err});
+        res.status(400).send({error: err.message});
     }
 });
 
@@ -48,74 +79,147 @@ router.patch('/:id', async (req, res) => {
         let toUpdate = {};
         if(req.body.description) toUpdate.description = req.body.description;
         if(req.body.name) toUpdate.name = req.body.name;
-        const updated = await Torrent.findByIdAndUpdate(req.params.id, toUpdate);
-        if(updated) res.send(updated);
-        else res.status(404).send({error: 'Object with id: ' + req.params.id + ' not found'});
+        Torrent.findOneAndUpdate({_id: req.params.id, isDeleted: false}, toUpdate, (err, result) => {
+            if(!err){
+                if(!result){
+                    res.status(404).send({error: 'Torrent with the id: ' + req.params.id + ' not found'});
+                } else{
+                    if(toUpdate.description) result.description = toUpdate.description;
+                    if(toUpdate.name) result.name = toUpdate.name;
+                    res.send(result);
+                }
+            } else{
+                res.status(400).send({error: err.message});
+            }
+        });
     } catch(err){
-        res.status(404).send({error: err});
+        res.status(400).send({error: err.message});
     }
 });
 
 router.get('/name/:name', async (req, res) => {
     try{
-        const resultQuery = await Torrent.find({name: {$regex: req.params.name, $options: 'i'}, isDeleted: false});
-        res.send(resultQuery);
+        Torrent.find({name: {$regex: req.params.name, $options: 'i'}, isDeleted: false}, (err, result) => {
+            if(!err){
+                res.send(result);
+            } else{
+                res.status(400).send({error: err.message});
+            }
+        });
     } catch(err){
-        res.json({error: err});
+        res.status(400).send({error: err.message});
     }
 });
 
 router.get('/distribution/:distribution', async (req, res) => {
     try{
-        const resultQuery = await Torrent.find({distrobution: {$regex: req.params.distribution, $options: 'i'}, isDeleted: false});
-        res.send(resultQuery);
+        Torrent.find({distrobution: {$regex: req.params.distribution, $options: 'i'}, isDeleted: false}, (err, result) => {
+            if(!err){
+                if(!result){
+                    res.status(404).send({error: 'Torrents with in the distribution: ' + req.params.distribution + ' not found'});
+                } else{
+                    res.send(result);
+                }
+            } else{
+                res.status(400).send({error: err.message});
+            }
+        });
     } catch(err){
-        res.json({error: err});
+        res.json({error: err.message});
     }
 });
 
 router.get('/author/:author', async (req, res) => {
     try{
-        const resultQuery = await Torrent.find({author: req.params.author, isDeleted: false});
-        res.send(resultQuery);
+        Torrent.find({author: req.params.author, isDeleted: false}, (err, result) => {
+            if(!err){
+                if(!result){
+                    res.status(404).send({error: 'Torrents with the author: ' + req.params.author + ' not found'});
+                } else{
+                    res.send(result);
+                }
+            } else{
+                res.status(400).send({error: err.message});
+            }
+        });
     } catch(err){
-        res.json({error: err});
+        res.status(400).send({error: err.message});
     }
 });
 
 router.patch('/:id/seed', async (req, res) => {
     try{
-        const updated = await Torrent.findByIdAndUpdate(req.params.id, {$inc: {seeders: 1}});
-        res.send(updated);
+        Torrent.findOneAndUpdate({_id: req.params.id, isDeleted: false}, {$inc: {seeders: 1}}, (err, updated) => {
+            if(!err){
+                if(!updated){
+                    res.status(404).send({error: 'Torrent with id: ' + req.params.id + ' not found'});
+                } else{
+                    updated.seeders++;
+                    res.send(updated);
+                }
+            } else{
+                res.status(400).send({error: err.message});
+            }
+        });
     } catch(err){
-        res.json({error: err});
+        res.status(400).send({error: err.message});
     }
 });
 
 router.patch('/:id/leech', async (req, res) => {
     try{
-        const updated = await Torrent.findByIdAndUpdate(req.params.id, {$inc: {leechers: 1}});
-        res.send(updated);
+        Torrent.findOneAndUpdate({_id: req.params.id, isDeleted: false}, {$inc: {leechers: 1}}, (err, updated) => {
+            if(!err){
+                if(!updated){
+                    res.status(404).send({error: 'Torrent with id: ' + req.params.id + ' not found'});
+                } else{
+                    updated.leechers++;
+                    res.send(updated);
+                }
+            } else{
+                res.status(400).send({error: err.message});
+            }
+        });
     } catch(err){
-        res.json({error: err});
+        res.status(400).send({error: err.message});
     }
 });
 
 router.patch('/:id/unseed', async (req, res) => {
     try{
-        const updated = await Torrent.findByIdAndUpdate(req.params.id, {$inc: {seeders: -1}});
-        res.send(updated);
+        Torrent.findOneAndUpdate({_id: req.params.id, isDeleted: false}, {$inc: {seeders: -1}}, (err, updated) => {
+            if(!err){
+                if(!updated){
+                    res.status(404).send({error: 'Torrent with id: ' + req.params.id + ' not found'});
+                } else{
+                    updated.seeders--;
+                    res.send(updated);
+                }
+            } else{
+                res.status(400).send({error: err.message});
+            }
+        });
     } catch(err){
-        res.json({error: err});
+        res.status(400).send({error: err.message});
     }
 });
 
 router.patch('/:id/unleech', async (req, res) => {
     try{
-        const updated = await Torrent.findByIdAndUpdate(req.params.id, {$inc: {leechers: -1}});
-        res.send(updated);
+        Torrent.findOneAndUpdate({_id: req.params.id, isDeleted: false}, {$inc: {leechers: -1}}, (err, updated) => {
+            if(!err){
+                if(!updated){
+                    res.status(404).send({error: 'Torrent with id: ' + req.params.id + ' not found'});
+                } else{
+                    updated.leechers--;
+                    res.send(updated);
+                }
+            } else{
+                res.status(400).send({error: err.message});
+            }
+        });
     } catch(err){
-        res.json({error: err});
+        res.status(400).send({error: err.message});
     }
 });
 
