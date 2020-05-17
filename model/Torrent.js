@@ -21,8 +21,7 @@ const torrentSchema = new mongoose.Schema({
     },
     filename: {
         type: String,
-        required: [true, 'filename is required'],
-        unique: [true, 'filename is already in use']
+        required: [true, 'filename is required']
     },
     distribution: {
         type: Object,
@@ -44,10 +43,12 @@ const torrentSchema = new mongoose.Schema({
     seeders: {
         type: Number,
         default: 0,
+        min: [0, "Number of seeders can't be negative"]
     },
     leechers: {
         type: Number,
         default: 0,
+        min: [0, "Number of leechers can't be negative"]
     },
     dateCreated: {
         type: Date,
